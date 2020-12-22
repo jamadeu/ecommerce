@@ -43,6 +43,7 @@ class CategoryControllerTest {
         BDDMockito.when(categoryServiceMock.save(ArgumentMatchers.any(NewCategoryRequest.class)))
                 .thenReturn(CategoryCreator.createValidCategory());
         BDDMockito.doNothing().when(categoryServiceMock).replace(ArgumentMatchers.any(ReplaceCategoryRequest.class));
+        BDDMockito.doNothing().when(categoryServiceMock).delete(ArgumentMatchers.anyLong());
     }
 
     @Test
@@ -86,10 +87,19 @@ class CategoryControllerTest {
     @Test
     @DisplayName("replace updates category when successful")
     void replace_UpdatesCategory_WhenSuccessful() {
-        ResponseEntity<Category> responseEntity = categoryController.replace(
+        ResponseEntity<Category> response = categoryController.replace(
                 ReplaceCategoryRequestCreator.createReplaceCategoryRequest());
 
-        Assertions.assertThat(responseEntity).isNotNull();
-        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        Assertions.assertThat(response).isNotNull();
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
+
+    @Test
+    @DisplayName("delete deletes category when successful")
+    void delete_DeletesCategory_WhenSuccessful() {
+        ResponseEntity<Void> response = categoryController.delete(1L);
+
+        Assertions.assertThat(response).isNotNull();
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 }
