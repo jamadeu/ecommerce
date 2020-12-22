@@ -1,8 +1,10 @@
 package br.com.jamadeu.ecommerce.modules.category.controller;
 
 import br.com.jamadeu.ecommerce.modules.category.domain.Category;
+import br.com.jamadeu.ecommerce.modules.category.requests.NewCategoryRequest;
 import br.com.jamadeu.ecommerce.modules.category.service.CategoryService;
 import br.com.jamadeu.ecommerce.modules.category.util.CategoryCreator;
+import br.com.jamadeu.ecommerce.modules.category.util.NewCategoryRequestCreator;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -36,6 +38,8 @@ class CategoryControllerTest {
                 .thenReturn(categoryPage);
         BDDMockito.when(categoryServiceMock.findByIdOrThrowBadRequestException(ArgumentMatchers.anyLong()))
                 .thenReturn(CategoryCreator.createValidCategory());
+        BDDMockito.when(categoryServiceMock.save(ArgumentMatchers.any(NewCategoryRequest.class)))
+                .thenReturn(CategoryCreator.createValidCategory());
     }
 
     @Test
@@ -64,5 +68,15 @@ class CategoryControllerTest {
         Assertions.assertThat(response.getBody())
                 .isNotNull()
                 .isEqualTo(category);
+    }
+
+    @Test
+    @DisplayName("save returns category when successful")
+    void save_ReturnsCategory_WhenSuccessful() {
+        Category category = categoryController.create(NewCategoryRequestCreator.createNewCategoryRequest()).getBody();
+
+        Assertions.assertThat(category)
+                .isNotNull()
+                .isEqualTo(CategoryCreator.createValidCategory());
     }
 }
