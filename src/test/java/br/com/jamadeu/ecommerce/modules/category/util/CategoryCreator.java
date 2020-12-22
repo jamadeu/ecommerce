@@ -15,4 +15,11 @@ public class CategoryCreator {
                 .category("category")
                 .build();
     }
+
+    public static Category createUpdatedCategory() {
+        return Category.builder()
+                .id(1L)
+                .category("updated category")
+                .build();
+    }
 }

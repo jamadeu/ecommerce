@@ -2,9 +2,11 @@ package br.com.jamadeu.ecommerce.modules.category.controller;
 
 import br.com.jamadeu.ecommerce.modules.category.domain.Category;
 import br.com.jamadeu.ecommerce.modules.category.requests.NewCategoryRequest;
+import br.com.jamadeu.ecommerce.modules.category.requests.ReplaceCategoryRequest;
 import br.com.jamadeu.ecommerce.modules.category.service.CategoryService;
 import br.com.jamadeu.ecommerce.modules.category.util.CategoryCreator;
 import br.com.jamadeu.ecommerce.modules.category.util.NewCategoryRequestCreator;
+import br.com.jamadeu.ecommerce.modules.category.util.ReplaceCategoryRequestCreator;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -40,6 +42,7 @@ class CategoryControllerTest {
                 .thenReturn(CategoryCreator.createValidCategory());
         BDDMockito.when(categoryServiceMock.save(ArgumentMatchers.any(NewCategoryRequest.class)))
                 .thenReturn(CategoryCreator.createValidCategory());
+        BDDMockito.doNothing().when(categoryServiceMock).replace(ArgumentMatchers.any(ReplaceCategoryRequest.class));
     }
 
     @Test
@@ -78,5 +81,15 @@ class CategoryControllerTest {
         Assertions.assertThat(category)
                 .isNotNull()
                 .isEqualTo(CategoryCreator.createValidCategory());
+    }
+
+    @Test
+    @DisplayName("replace updates category when successful")
+    void replace_UpdatesCategory_WhenSuccessful() {
+        ResponseEntity<Category> responseEntity = categoryController.replace(
+                ReplaceCategoryRequestCreator.createReplaceCategoryRequest());
+
+        Assertions.assertThat(responseEntity).isNotNull();
+        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 }

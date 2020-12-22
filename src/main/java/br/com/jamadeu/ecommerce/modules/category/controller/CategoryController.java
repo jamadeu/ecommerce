@@ -66,7 +66,7 @@ public class CategoryController {
     )
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Successful operation"),
-            @ApiResponse(responseCode = "400", description = "When user not found")
+            @ApiResponse(responseCode = "400", description = "When category not found")
     })
     public ResponseEntity<Category> replace(@RequestBody @Valid ReplaceCategoryRequest replaceCategoryRequest) {
         categoryService.replace(replaceCategoryRequest);
