@@ -12,7 +12,6 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -36,22 +35,22 @@ public class Product extends AbstractProduct {
     private BigDecimal value;
 
     @NotNull
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "product_id", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "category_id", nullable = false)
     @Schema(description = "This is the product's categories")
-    private List<Category> categories;
+    private Category category;
 
     @Builder
     public Product(Long id,
                    @NotEmpty(message = "The product name can not be empty") String name,
                    @NotEmpty(message = "The product description can not be empty")
-                       @Size(max = 400) String description,
+                   @Size(max = 400) String description,
                    @NotNull BigDecimal value,
-                   @NotNull List<Category> categories) {
+                   @NotNull Category category) {
         super(id);
         this.name = name;
         this.description = description;
         this.value = value;
-        this.categories = categories;
+        this.category = category;
     }
 }
