@@ -2,6 +2,7 @@ package br.com.jamadeu.ecommerce.modules.product.domain;
 
 import br.com.jamadeu.ecommerce.modules.category.domain.Category;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -39,4 +40,18 @@ public class Product extends AbstractProduct {
     @JoinColumn(name = "product_id", nullable = false)
     @Schema(description = "This is the product's categories")
     private List<Category> categories;
+
+    @Builder
+    public Product(Long id,
+                   @NotEmpty(message = "The product name can not be empty") String name,
+                   @NotEmpty(message = "The product description can not be empty")
+                       @Size(max = 400) String description,
+                   @NotNull BigDecimal value,
+                   @NotNull List<Category> categories) {
+        super(id);
+        this.name = name;
+        this.description = description;
+        this.value = value;
+        this.categories = categories;
+    }
 }
