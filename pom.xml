@@ -20,6 +20,7 @@
 		<org.mapstruct.version>1.4.1.Final</org.mapstruct.version>
 		<springdoc-openapi-ui.version>1.5.0</springdoc-openapi-ui.version>
 		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+		<easy-random-core.version>4.0.0</easy-random-core.version>
 	</properties>
 
 	<dependencies>
@@ -27,6 +28,12 @@
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-ui</artifactId>
 			<version>${springdoc-openapi-ui.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jeasy</groupId>
+			<artifactId>easy-random-core</artifactId>
+			<version>${easy-random-core.version}</version>
 		</dependency>
 
 		<dependency>
