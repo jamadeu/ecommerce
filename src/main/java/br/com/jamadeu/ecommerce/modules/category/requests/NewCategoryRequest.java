@@ -14,7 +14,7 @@ import javax.validation.constraints.NotEmpty;
 @NoArgsConstructor
 public class NewCategoryRequest {
 
-    @NotEmpty(message = "The user name can not be empty")
+    @NotEmpty(message = "The category name can not be empty")
     @Schema(description = "This is the category's name")
     private String category;
 }

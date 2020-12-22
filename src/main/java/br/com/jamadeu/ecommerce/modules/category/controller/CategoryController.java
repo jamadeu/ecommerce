@@ -2,6 +2,7 @@ package br.com.jamadeu.ecommerce.modules.category.controller;
 
 import br.com.jamadeu.ecommerce.modules.category.domain.Category;
 import br.com.jamadeu.ecommerce.modules.category.requests.NewCategoryRequest;
+import br.com.jamadeu.ecommerce.modules.category.requests.ReplaceCategoryRequest;
 import br.com.jamadeu.ecommerce.modules.category.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -49,7 +50,7 @@ public class CategoryController {
     @Operation(summary = "Create a new category",
             description = "Category field is mandatory, " +
                     "category must be unique",
-            tags = {"users"}
+            tags = {"categories"}
     )
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Successful operation"),
@@ -57,5 +58,18 @@ public class CategoryController {
     })
     public ResponseEntity<Category> create(@RequestBody @Valid NewCategoryRequest newCategoryRequest) {
         return new ResponseEntity<>(categoryService.save(newCategoryRequest), HttpStatus.CREATED);
+    }
+
+    @PutMapping
+    @Operation(summary = "Replace an existing category",
+            tags = {"categories"}
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Successful operation"),
+            @ApiResponse(responseCode = "400", description = "When user not found")
+    })
+    public ResponseEntity<Category> replace(@RequestBody @Valid ReplaceCategoryRequest replaceCategoryRequest) {
+        categoryService.replace(replaceCategoryRequest);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
