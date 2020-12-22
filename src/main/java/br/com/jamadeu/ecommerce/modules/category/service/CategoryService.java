@@ -4,6 +4,7 @@ import br.com.jamadeu.ecommerce.modules.category.domain.Category;
 import br.com.jamadeu.ecommerce.modules.category.mapper.CategoryMapper;
 import br.com.jamadeu.ecommerce.modules.category.repository.CategoryRepository;
 import br.com.jamadeu.ecommerce.modules.category.requests.NewCategoryRequest;
+import br.com.jamadeu.ecommerce.modules.category.requests.ReplaceCategoryRequest;
 import br.com.jamadeu.ecommerce.shared.exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -37,5 +38,14 @@ public class CategoryService {
         if (categoryRepository.findByCategory(category).isPresent()) {
             throw new BadRequestException("Category already exists");
         }
+    }
+
+    public void replace(ReplaceCategoryRequest replaceCategoryRequest) {
+        Category categoryToReplace = CategoryMapper.INSTANCE.toCategory(replaceCategoryRequest);
+        Category foundedCategory = findByIdOrThrowBadRequestException(replaceCategoryRequest.getId());
+        if (!foundedCategory.getCategory().equals(categoryToReplace.getCategory())) {
+            checkIfCategoryExists(categoryToReplace.getCategory());
+        }
+        categoryRepository.save(categoryToReplace);
     }
 }

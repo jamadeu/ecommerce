@@ -2,6 +2,7 @@ package br.com.jamadeu.ecommerce.modules.category.mapper;
 
 import br.com.jamadeu.ecommerce.modules.category.domain.Category;
 import br.com.jamadeu.ecommerce.modules.category.requests.NewCategoryRequest;
+import br.com.jamadeu.ecommerce.modules.category.requests.ReplaceCategoryRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -12,4 +13,6 @@ public abstract class CategoryMapper {
 
     @Mapping(target = "id", ignore = true)
     public abstract Category toCategory(NewCategoryRequest newCategoryRequest);
+
+    public abstract Category toCategory(ReplaceCategoryRequest replaceCategoryRequest);
 }
