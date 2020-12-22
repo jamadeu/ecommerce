@@ -51,6 +51,4 @@ class ProductControllerTest {
                 .hasSize(1);
         Assertions.assertThat(productPage.toList().get(0).getName()).isEqualTo(expectedName);
     }
-
-
 }
