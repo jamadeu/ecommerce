@@ -31,18 +31,15 @@ class CategoryServiceTest {
     @Mock
     private CategoryRepository categoryRepositoryMock;
 
-    private Category category;
-
     @BeforeEach
     void setup() {
-        category = CategoryCreator.createValidCategory();
-        PageImpl<Category> categoryPage = new PageImpl<>(List.of(category));
+        PageImpl<Category> categoryPage = new PageImpl<>(List.of(CategoryCreator.createValidCategory()));
         BDDMockito.when(categoryRepositoryMock.findAll(ArgumentMatchers.any(PageRequest.class)))
                 .thenReturn(categoryPage);
         BDDMockito.when(categoryRepositoryMock.findById(ArgumentMatchers.anyLong()))
-                .thenReturn(Optional.of(category));
+                .thenReturn(Optional.of(CategoryCreator.createValidCategory()));
         BDDMockito.when(categoryRepositoryMock.save(ArgumentMatchers.any(Category.class)))
-                .thenReturn(category);
+                .thenReturn(CategoryCreator.createValidCategory());
         BDDMockito.when(categoryRepositoryMock.findByCategory(ArgumentMatchers.anyString()))
                 .thenReturn(Optional.empty());
     }
@@ -50,7 +47,7 @@ class CategoryServiceTest {
     @Test
     @DisplayName("listAll returns list of categories inside page object when successful")
     void listAll_ReturnsListOfUsersInsidePageObject_WhenSuccessful() {
-        String expectedCategory = category.getCategory();
+        String expectedCategory = CategoryCreator.createValidCategory().getCategory();
         Page<Category> categoryPage = categoryService.listAll(PageRequest.of(1, 1));
 
         Assertions.assertThat(categoryPage).isNotNull();
@@ -63,7 +60,7 @@ class CategoryServiceTest {
     @Test
     @DisplayName("findByIdOrThrowBadRequestException returns category when successful")
     void findByIdOrThrowBadRequestException_ReturnsCategory_WhenSuccessful() {
-        Long expectedId = category.getId();
+        Long expectedId = CategoryCreator.createValidCategory().getId();
         Category foundedCategory = categoryService.findByIdOrThrowBadRequestException(1);
 
         Assertions.assertThat(foundedCategory).isNotNull();
@@ -84,6 +81,7 @@ class CategoryServiceTest {
     @Test
     @DisplayName("save returns category when successful")
     void save_ReturnsCategory_WhenSuccessful() {
+        Category category = CategoryCreator.createValidCategory();
         Category createdCategory = categoryService.save(NewCategoryRequestCreator.createNewCategoryRequest());
 
         Assertions.assertThat(createdCategory).isNotNull()

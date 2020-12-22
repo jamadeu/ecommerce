@@ -29,22 +29,19 @@ class CategoryControllerTest {
     @Mock
     private CategoryService categoryServiceMock;
 
-    private Category category;
-
     @BeforeEach
     void setup() {
-        category = CategoryCreator.createValidCategory();
-        PageImpl<Category> categoryPage = new PageImpl<>(List.of(category));
+        PageImpl<Category> categoryPage = new PageImpl<>(List.of(CategoryCreator.createValidCategory()));
         BDDMockito.when(categoryServiceMock.listAll(ArgumentMatchers.any(PageRequest.class)))
                 .thenReturn(categoryPage);
         BDDMockito.when(categoryServiceMock.findByIdOrThrowBadRequestException(ArgumentMatchers.anyLong()))
-                .thenReturn(category);
+                .thenReturn(CategoryCreator.createValidCategory());
     }
 
     @Test
     @DisplayName("listAll returns list of categories inside page object when successful")
     void listAll_ReturnsListOfCategoriesInsidePageObject_WhenSuccessful() {
-        String expectedCategory = category.getCategory();
+        String expectedCategory = CategoryCreator.createValidCategory().getCategory();
         Page<Category> categoryPage = categoryController.listAll(PageRequest.of(1, 1)).getBody();
 
         Assertions.assertThat(categoryPage).isNotNull();
@@ -57,6 +54,7 @@ class CategoryControllerTest {
     @Test
     @DisplayName("findById returns category when successful")
     void findById_ReturnsCategory_WhenSuccessful() {
+        Category category = CategoryCreator.createValidCategory();
         ResponseEntity<Category> response = categoryController.findById(1);
 
         Assertions.assertThat(response).isNotNull();
