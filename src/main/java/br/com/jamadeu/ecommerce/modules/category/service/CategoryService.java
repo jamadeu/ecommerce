@@ -34,12 +34,7 @@ public class CategoryService {
         return categoryRepository.save(categoryToBeSaved);
     }
 
-    private void checkIfCategoryExists(String category) {
-        if (categoryRepository.findByCategory(category).isPresent()) {
-            throw new BadRequestException("Category already exists");
-        }
-    }
-
+    @Transactional
     public void replace(ReplaceCategoryRequest replaceCategoryRequest) {
         Category categoryToReplace = CategoryMapper.INSTANCE.toCategory(replaceCategoryRequest);
         Category foundedCategory = findByIdOrThrowBadRequestException(replaceCategoryRequest.getId());
@@ -47,5 +42,17 @@ public class CategoryService {
             checkIfCategoryExists(categoryToReplace.getCategory());
         }
         categoryRepository.save(categoryToReplace);
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        Category category = findByIdOrThrowBadRequestException(id);
+        categoryRepository.delete(category);
+    }
+
+    private void checkIfCategoryExists(String category) {
+        if (categoryRepository.findByCategory(category).isPresent()) {
+            throw new BadRequestException("Category already exists");
+        }
     }
 }
