@@ -15,6 +15,8 @@ import org.mockito.Mock;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
@@ -35,6 +37,8 @@ class CategoryControllerTest {
         PageImpl<Category> categoryPage = new PageImpl<>(List.of(category));
         BDDMockito.when(categoryServiceMock.listAll(ArgumentMatchers.any(PageRequest.class)))
                 .thenReturn(categoryPage);
+        BDDMockito.when(categoryServiceMock.findByIdOrThrowBadRequestException(ArgumentMatchers.anyLong()))
+                .thenReturn(category);
     }
 
     @Test
@@ -48,5 +52,19 @@ class CategoryControllerTest {
                 .isNotEmpty()
                 .hasSize(1);
         Assertions.assertThat(categoryPage.toList().get(0).getCategory()).isEqualTo(expectedCategory);
+    }
+
+    @Test
+    @DisplayName("findById returns category when successful")
+    void findById_ReturnsCategory_WhenSuccessful() {
+        ResponseEntity<Category> response = categoryController.findById(1);
+
+        Assertions.assertThat(response).isNotNull();
+        Assertions.assertThat(response.getStatusCode())
+                .isNotNull()
+                .isEqualTo(HttpStatus.OK);
+        Assertions.assertThat(response.getBody())
+                .isNotNull()
+                .isEqualTo(category);
     }
 }
