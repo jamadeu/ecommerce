@@ -44,6 +44,7 @@ class CategoryServiceTest {
                 .thenReturn(CategoryCreator.createValidCategory());
         BDDMockito.when(categoryRepositoryMock.findByCategory(ArgumentMatchers.anyString()))
                 .thenReturn(Optional.empty());
+        BDDMockito.doNothing().when(categoryRepositoryMock).delete(ArgumentMatchers.any(Category.class));
     }
 
     @Test
@@ -120,13 +121,19 @@ class CategoryServiceTest {
     }
 
     @Test
-    @DisplayName("replace returns status code 400 bad request when category already in use")
-    void replace_ReturnsStatusCode400BadRequest_WhenCategoryAlreadyExists() {
+    @DisplayName("replace throws status code 400 bad request when category already in use")
+    void replace_ThrowsStatusCode400BadRequest_WhenCategoryAlreadyExists() {
         BDDMockito.when(categoryRepositoryMock.findByCategory(ArgumentMatchers.anyString())).
                 thenReturn(Optional.of(CategoryCreator.createValidCategory()));
         ReplaceCategoryRequest replaceCategoryRequest = ReplaceCategoryRequestCreator.createReplaceCategoryRequest();
 
         Assertions.assertThatExceptionOfType(BadRequestException.class)
                 .isThrownBy(() -> categoryService.replace(replaceCategoryRequest));
+    }
+
+    @Test
+    @DisplayName("delete deletes a category when successful")
+    void delete_DeletesCategory_WhenSuccessful(){
+        Assertions.assertThatCode(() -> categoryService.delete(1L)).doesNotThrowAnyException();
     }
 }
