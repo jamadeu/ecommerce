@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.List;
 import java.util.Optional;
 
 @DataJpaTest
@@ -92,22 +93,22 @@ class ProductRepositoryTest {
     }
 
     @Test
-    @DisplayName("findByCategory returns optional of product when successful")
-    void findByCategory_ReturnsOptionalProduct_WhenSuccessful() {
+    @DisplayName("findByCategory returns list of product when successful")
+    void findByCategory_ReturnsListProduct_WhenSuccessful() {
         Product product = productRepository.save(ProductCreator.createProductToBeSaved(category));
-        Optional<Product> productOptional = productRepository.findByCategory(category);
+        List<Product> productOptional = productRepository.findByCategory(category);
 
         Assertions.assertThat(productOptional)
                 .isNotNull()
                 .isNotEmpty();
-        Assertions.assertThat(productOptional.get().getId())
+        Assertions.assertThat(productOptional.get(0).getId())
                 .isEqualTo(product.getId());
     }
 
     @Test
-    @DisplayName("findByCategory returns an empty optional when product is not found")
-    void findByCategory_ReturnsAnEmptyOptional_WhenProductIsNotFound() {
-        Optional<Product> productOptional = productRepository.findByCategory(category);
+    @DisplayName("findByCategory returns an empty list when product is not found")
+    void findByCategory_ReturnsAnEmptyList_WhenProductIsNotFound() {
+        List<Product> productOptional = productRepository.findByCategory(category);
 
         Assertions.assertThat(productOptional)
                 .isNotNull()
