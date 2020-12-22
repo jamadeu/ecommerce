@@ -24,4 +24,14 @@ public class ProductCreator {
                 .category(category)
                 .build();
     }
+
+    public static Product createValidProduct() {
+        return Product.builder()
+                .id(1L)
+                .name("product")
+                .description("description")
+                .value(BigDecimal.ZERO)
+                .category(CategoryCreator.createValidCategory())
+                .build();
+    }
 }
