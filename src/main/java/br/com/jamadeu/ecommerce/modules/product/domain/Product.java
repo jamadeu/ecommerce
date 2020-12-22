@@ -36,7 +36,7 @@ public class Product extends AbstractProduct {
 
     @NotNull
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "categories", nullable = false)
+    @JoinColumn(name = "product_id", nullable = false)
     @Schema(description = "This is the product's categories")
     private List<Category> categories;
 }
