@@ -1,6 +1,7 @@
 package br.com.jamadeu.ecommerce.modules.category.controller;
 
 import br.com.jamadeu.ecommerce.modules.category.domain.Category;
+import br.com.jamadeu.ecommerce.modules.category.requests.NewCategoryRequest;
 import br.com.jamadeu.ecommerce.modules.category.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
