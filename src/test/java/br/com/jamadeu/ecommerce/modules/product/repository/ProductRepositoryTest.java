@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.Optional;
+
 @DataJpaTest
 @DisplayName("ProductRepository tests")
 class ProductRepositoryTest {
@@ -55,5 +57,62 @@ class ProductRepositoryTest {
         Assertions.assertThat(productSaved.getCategory())
                 .isNotNull();
     }
+
+    @Test
+    @DisplayName("delete deletes product when successful")
+    void delete_DeleteProduct_WhenSuccessful() {
+        Product product = productRepository.save(ProductCreator.createProductToBeSaved(category));
+        productRepository.delete(product);
+        Optional<Product> productOptional = productRepository.findById(product.getId());
+
+        Assertions.assertThat(productOptional).isEmpty();
+    }
+
+    @Test
+    @DisplayName("findByName returns optional of product when successful")
+    void findByName_ReturnsOptionalProduct_WhenSuccessful() {
+        Product product = productRepository.save(ProductCreator.createProductToBeSaved(category));
+        Optional<Product> productOptional = productRepository.findByName(product.getName());
+
+        Assertions.assertThat(productOptional)
+                .isNotNull()
+                .isNotEmpty();
+        Assertions.assertThat(productOptional.get().getId())
+                .isEqualTo(product.getId());
+    }
+
+    @Test
+    @DisplayName("findByName returns an empty optional when product is not found")
+    void findByName_ReturnsAnEmptyOptional_WhenProductIsNotFound() {
+        Optional<Product> productOptional = productRepository.findByName("not found product");
+
+        Assertions.assertThat(productOptional)
+                .isNotNull()
+                .isEmpty();
+    }
+
+    @Test
+    @DisplayName("findByCategory returns optional of product when successful")
+    void findByCategory_ReturnsOptionalProduct_WhenSuccessful() {
+        Product product = productRepository.save(ProductCreator.createProductToBeSaved(category));
+        Optional<Product> productOptional = productRepository.findByCategory(category);
+
+        Assertions.assertThat(productOptional)
+                .isNotNull()
+                .isNotEmpty();
+        Assertions.assertThat(productOptional.get().getId())
+                .isEqualTo(product.getId());
+    }
+
+    @Test
+    @DisplayName("findByCategory returns an empty optional when product is not found")
+    void findByCategory_ReturnsAnEmptyOptional_WhenProductIsNotFound() {
+        Optional<Product> productOptional = productRepository.findByCategory(category);
+
+        Assertions.assertThat(productOptional)
+                .isNotNull()
+                .isEmpty();
+    }
+
 
 }
