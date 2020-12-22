@@ -11,10 +11,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.transaction.Transactional;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("categories")
@@ -41,5 +41,20 @@ public class CategoryController {
     })
     public ResponseEntity<Category> findById(@PathVariable long id) {
         return new ResponseEntity<>(categoryService.findByIdOrThrowBadRequestException(id), HttpStatus.OK);
+    }
+
+    @PostMapping
+    @Transactional
+    @Operation(summary = "Create a new category",
+            description = "Category field is mandatory, " +
+                    "category must be unique",
+            tags = {"users"}
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Successful operation"),
+            @ApiResponse(responseCode = "400", description = "When there is an error with some mandatory field")
+    })
+    public ResponseEntity<Category> create(@RequestBody @Valid NewCategoryRequest newCategoryRequest) {
+        return new ResponseEntity<>(categoryService.save(newCategoryRequest), HttpStatus.CREATED);
     }
 }
