@@ -3,8 +3,10 @@ package br.com.jamadeu.ecommerce.modules.category.service;
 import br.com.jamadeu.ecommerce.modules.category.domain.Category;
 import br.com.jamadeu.ecommerce.modules.category.repository.CategoryRepository;
 import br.com.jamadeu.ecommerce.modules.category.requests.NewCategoryRequest;
+import br.com.jamadeu.ecommerce.modules.category.requests.ReplaceCategoryRequest;
 import br.com.jamadeu.ecommerce.modules.category.util.CategoryCreator;
 import br.com.jamadeu.ecommerce.modules.category.util.NewCategoryRequestCreator;
+import br.com.jamadeu.ecommerce.modules.category.util.ReplaceCategoryRequestCreator;
 import br.com.jamadeu.ecommerce.shared.exception.BadRequestException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -89,8 +91,8 @@ class CategoryServiceTest {
     }
 
     @Test
-    @DisplayName("save returns status code 400 bad request when category is already exists")
-    void save_ReturnsStatusCode400BadRequest_WhenCategoryIsAlreadyExists() {
+    @DisplayName("save returns status code 400 bad request when category already exists")
+    void save_ReturnsStatusCode400BadRequest_WhenCategoryAlreadyExists() {
         BDDMockito.when(categoryRepositoryMock.findByCategory(ArgumentMatchers.anyString())).
                 thenReturn(Optional.of(CategoryCreator.createValidCategory()));
         NewCategoryRequest newCategoryRequest = NewCategoryRequestCreator.createNewCategoryRequest();
@@ -99,4 +101,32 @@ class CategoryServiceTest {
                 .isThrownBy(() -> categoryService.save(newCategoryRequest));
     }
 
+    @Test
+    @DisplayName("replace updates category when successful")
+    void replace_UpdatesCategory_WhenSuccessful() {
+        Assertions.assertThatCode(() -> categoryService.replace(ReplaceCategoryRequestCreator.createReplaceCategoryRequest()))
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    @DisplayName("replace returns status code 400 bad request when category is not found")
+    void replace_ReturnsStatusCode400BadRequest_WhenUserIsNotFound() {
+        BDDMockito.when(categoryRepositoryMock.findById(ArgumentMatchers.anyLong())).
+                thenReturn(Optional.empty());
+        ReplaceCategoryRequest replaceCategoryRequest = ReplaceCategoryRequestCreator.createReplaceCategoryRequest();
+
+        Assertions.assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> categoryService.replace(replaceCategoryRequest));
+    }
+
+    @Test
+    @DisplayName("replace returns status code 400 bad request when category already in use")
+    void replace_ReturnsStatusCode400BadRequest_WhenCategoryAlreadyExists() {
+        BDDMockito.when(categoryRepositoryMock.findByCategory(ArgumentMatchers.anyString())).
+                thenReturn(Optional.of(CategoryCreator.createValidCategory()));
+        ReplaceCategoryRequest replaceCategoryRequest = ReplaceCategoryRequestCreator.createReplaceCategoryRequest();
+
+        Assertions.assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> categoryService.replace(replaceCategoryRequest));
+    }
 }
