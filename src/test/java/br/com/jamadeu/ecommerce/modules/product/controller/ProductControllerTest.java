@@ -34,6 +34,8 @@ class ProductControllerTest {
         PageImpl<Product> productPage = new PageImpl<>(List.of(ProductCreator.createValidProduct()));
         BDDMockito.when(productServiceMock.listAll(ArgumentMatchers.any(PageRequest.class)))
                 .thenReturn(productPage);
+        BDDMockito.when(productServiceMock.listAllByCategory(ArgumentMatchers.any(PageRequest.class), ArgumentMatchers.anyString()))
+                .thenReturn(productPage);
     }
 
     @Test
@@ -41,6 +43,23 @@ class ProductControllerTest {
     void listAll_ReturnsListOfProductsInsidePageObject_WhenSuccessful() {
         String expectedName = ProductCreator.createValidProduct().getName();
         ResponseEntity<Page<Product>> response = productController.listAll(PageRequest.of(1, 1));
+        Page<Product> productPage = response.getBody();
+
+        Assertions.assertThat(response).isNotNull();
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Assertions.assertThat(productPage).isNotNull();
+        Assertions.assertThat(productPage.toList())
+                .isNotEmpty()
+                .hasSize(1);
+        Assertions.assertThat(productPage.toList().get(0).getName()).isEqualTo(expectedName);
+    }
+
+    @Test
+    @DisplayName("listAllByCategory returns list of products inside page object when successful")
+    void listAllByCategory_ReturnsListOfProductsInsidePageObject_WhenSuccessful() {
+        String expectedName = ProductCreator.createValidProduct().getName();
+        String category = ProductCreator.createValidProduct().getCategory().getCategory();
+        ResponseEntity<Page<Product>> response = productController.listAllByCategory(PageRequest.of(1, 1), category);
         Page<Product> productPage = response.getBody();
 
         Assertions.assertThat(response).isNotNull();
