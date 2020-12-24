@@ -39,6 +39,8 @@ class ProductControllerTest {
                 .thenReturn(productPage);
         BDDMockito.when(productServiceMock.listAllByCategory(ArgumentMatchers.any(PageRequest.class), ArgumentMatchers.anyString()))
                 .thenReturn(productPage);
+        BDDMockito.when(productServiceMock.findByIdOrThrowBadRequestException(ArgumentMatchers.anyLong()))
+                .thenReturn(ProductCreator.createValidProduct());
     }
 
     @Test
@@ -81,5 +83,20 @@ class ProductControllerTest {
 
         Assertions.assertThatExceptionOfType(BadRequestException.class)
                 .isThrownBy(() -> productController.listAllByCategory(pageRequest, null));
+    }
+
+    @Test
+    @DisplayName("findById returns product when successful")
+    void findById_ReturnsProduct_WhenSuccessful() {
+        Product product = ProductCreator.createValidProduct();
+        ResponseEntity<Product> response = productController.findById(1L);
+
+        Assertions.assertThat(response).isNotNull();
+        Assertions.assertThat(response.getStatusCode())
+                .isNotNull()
+                .isEqualTo(HttpStatus.OK);
+        Assertions.assertThat(response.getBody())
+                .isNotNull()
+                .isEqualTo(product);
     }
 }
