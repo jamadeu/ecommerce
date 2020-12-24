@@ -3,6 +3,8 @@ package br.com.jamadeu.ecommerce.modules.product.controller;
 import br.com.jamadeu.ecommerce.modules.product.domain.Product;
 import br.com.jamadeu.ecommerce.modules.product.service.ProductService;
 import br.com.jamadeu.ecommerce.modules.product.util.ProductCreator;
+import br.com.jamadeu.ecommerce.shared.exception.BadRequestException;
+import lombok.extern.log4j.Log4j2;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,6 +23,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 
+@Log4j2
 @ExtendWith(SpringExtension.class)
 class ProductControllerTest {
     @InjectMocks
@@ -69,5 +72,14 @@ class ProductControllerTest {
                 .isNotEmpty()
                 .hasSize(1);
         Assertions.assertThat(productPage.toList().get(0).getName()).isEqualTo(expectedName);
+    }
+
+    @Test
+    @DisplayName("listAllByCategory throws BadRequestException when category is null")
+    void listAllByCategory_ThrowsBadRequestException_WhenCategoryIsNull() {
+        PageRequest pageRequest = PageRequest.of(1, 1);
+
+        Assertions.assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> productController.listAllByCategory(pageRequest, null));
     }
 }
