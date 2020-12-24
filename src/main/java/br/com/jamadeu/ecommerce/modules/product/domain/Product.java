@@ -29,9 +29,8 @@ public class Product extends AbstractProduct {
     @Schema(description = "This is the product's description")
     private String description;
 
-    @NotNull
     @Column(nullable = false)
-    @Schema(description = "This is the product's name", defaultValue = "0")
+    @Schema(description = "This is the product's value", defaultValue = "0")
     private BigDecimal value;
 
     @NotNull
