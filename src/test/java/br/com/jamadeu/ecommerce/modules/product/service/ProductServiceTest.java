@@ -44,6 +44,8 @@ class ProductServiceTest {
                 .thenReturn(Optional.of(CategoryCreator.createValidCategory()));
         BDDMockito.when(productRepositoryMock.findByCategory(ArgumentMatchers.any(Category.class)))
                 .thenReturn(List.of(ProductCreator.createValidProduct()));
+        BDDMockito.when(productRepositoryMock.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.of(ProductCreator.createValidProduct()));
     }
 
     @Test
@@ -83,6 +85,27 @@ class ProductServiceTest {
 
         Assertions.assertThatExceptionOfType(BadRequestException.class)
                 .isThrownBy(() -> productService.listAllByCategory(pageRequest, categoryNotExists));
+    }
+
+    @Test
+    @DisplayName("findByIdOrThrowBadRequestException returns product when successful")
+    void findByIdOrThrowBadRequestException_ReturnsProduct_WhenSuccessful() {
+        Long expectedId = ProductCreator.createValidProduct().getId();
+        Product foundedProduct = productService.findByIdOrThrowBadRequestException(1L);
+
+        Assertions.assertThat(foundedProduct).isNotNull();
+        Assertions.assertThat(foundedProduct.getId())
+                .isNotNull()
+                .isEqualTo(expectedId);
+    }
+
+    @Test
+    @DisplayName("findByIdOrThrowBadRequestException throws BadRequestException when category is not found")
+    void findByIdOrThrowBadRequestException_ThrowsBadRequestException_WhenCategoryIsNotFound() {
+        BDDMockito.when(productRepositoryMock.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.empty());
+        Assertions.assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> productService.findByIdOrThrowBadRequestException(1L));
     }
 
 }
