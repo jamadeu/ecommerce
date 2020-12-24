@@ -29,4 +29,9 @@ public class ProductService {
         List<Product> productList = productRepository.findByCategory(categoryFounded);
         return new PageImpl<>(productList, pageable, productList.size());
     }
+
+    public Product findByIdOrThrowBadRequestException(Long id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException("Product not found"));
+    }
 }
