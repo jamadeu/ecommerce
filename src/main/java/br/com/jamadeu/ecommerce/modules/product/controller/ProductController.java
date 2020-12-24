@@ -1,10 +1,11 @@
 package br.com.jamadeu.ecommerce.modules.product.controller;
 
-import br.com.jamadeu.ecommerce.modules.category.service.CategoryService;
 import br.com.jamadeu.ecommerce.modules.product.domain.Product;
 import br.com.jamadeu.ecommerce.modules.product.service.ProductService;
 import br.com.jamadeu.ecommerce.shared.exception.BadRequestException;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ProductController {
     private final ProductService productService;
-    private final CategoryService categoryService;
 
     @GetMapping
     @Operation(summary = "List all products paginated",
@@ -37,8 +37,26 @@ public class ProductController {
             description = "The default size is 5, use the parameter to change the default value",
             tags = {"products"}
     )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "400", description = "When category is null")
+    })
     public ResponseEntity<Page<Product>> listAllByCategory(@ParameterObject Pageable pageable, @PathVariable String category) {
         if (category == null) throw new BadRequestException("Category can not be null");
         return new ResponseEntity<>(productService.listAllByCategory(pageable, category), HttpStatus.OK);
     }
+
+    @GetMapping(path = "/{id}")
+    @Operation(summary = "find product by id",
+            tags = {"products"}
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "400", description = "When product is not foundd")
+    })
+    public ResponseEntity<Product> findById(@PathVariable Long id) {
+        return new ResponseEntity<>(productService.findByIdOrThrowBadRequestException(id), HttpStatus.OK);
+    }
+
+
 }
