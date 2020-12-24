@@ -15,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 @RestController
@@ -46,7 +45,6 @@ public class CategoryController {
     }
 
     @PostMapping
-    @Transactional
     @Operation(summary = "Create a new category",
             description = "Category field is mandatory, " +
                     "category must be unique",
