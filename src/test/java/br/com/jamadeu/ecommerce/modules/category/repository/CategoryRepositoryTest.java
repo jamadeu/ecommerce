@@ -24,9 +24,9 @@ class CategoryRepositoryTest {
 
         Assertions.assertThat(categorySaved).isNotNull();
         Assertions.assertThat(categorySaved.getId()).isNotNull();
-        Assertions.assertThat(categorySaved.getCategory())
+        Assertions.assertThat(categorySaved.getName())
                 .isNotNull()
-                .isEqualTo(categoryToBeSaved.getCategory());
+                .isEqualTo(categoryToBeSaved.getName());
     }
 
     @Test
@@ -35,14 +35,14 @@ class CategoryRepositoryTest {
         Category categoryToBeSaved = CategoryCreator.createCategoryToBeSaved();
         Category categorySaved = categoryRepository.save(categoryToBeSaved);
         String newCategory = "new Category";
-        categorySaved.setCategory(newCategory);
+        categorySaved.setName(newCategory);
         Category updatedCategory = categoryRepository.save(categorySaved);
 
         Assertions.assertThat(updatedCategory).isNotNull();
         Assertions.assertThat(updatedCategory.getId())
                 .isNotNull()
                 .isEqualTo(categorySaved.getId());
-        Assertions.assertThat(updatedCategory.getCategory())
+        Assertions.assertThat(updatedCategory.getName())
                 .isNotNull()
                 .isEqualTo(newCategory);
     }
@@ -61,7 +61,7 @@ class CategoryRepositoryTest {
     @DisplayName("findByCategory returns optional of user when successful")
     void findByCategory_ReturnsOptionalOfCategory_WhenSuccessful() {
         Category category = categoryRepository.save(CategoryCreator.createCategoryToBeSaved());
-        Optional<Category> categoryOptional = categoryRepository.findByCategory(category.getCategory());
+        Optional<Category> categoryOptional = categoryRepository.findByName(category.getName());
 
         Assertions.assertThat(categoryOptional)
                 .isNotNull()
@@ -74,7 +74,7 @@ class CategoryRepositoryTest {
     @Test
     @DisplayName("findByCategory returns an empty optional when category is not found")
     void findByCategory_ReturnsAnEmptyOptional_WhenCategoryIsNotFound() {
-        Optional<Category> categoryOptional = categoryRepository.findByCategory("not found category");
+        Optional<Category> categoryOptional = categoryRepository.findByName("not found category");
 
         Assertions.assertThat(categoryOptional)
                 .isNotNull()

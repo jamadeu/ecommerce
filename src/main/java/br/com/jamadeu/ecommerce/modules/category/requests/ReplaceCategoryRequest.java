@@ -23,5 +23,5 @@ public class ReplaceCategoryRequest {
 
     @NotEmpty(message = "The category name can not be empty")
     @Schema(description = "This is the category's name")
-    private String category;
+    private String name;
 }

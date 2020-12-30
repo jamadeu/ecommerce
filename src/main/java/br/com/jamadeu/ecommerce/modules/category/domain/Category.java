@@ -19,11 +19,11 @@ public class Category extends AbstractCategory {
     @NotEmpty(message = "The category name can not be empty")
     @Column(nullable = false, unique = true)
     @Schema(description = "This is the category's name")
-    private String categoryName;
+    private String name;
 
     @Builder
-    public Category(Long id, @NotEmpty(message = "The user name can not be empty") String categoryName) {
+    public Category(Long id, @NotEmpty(message = "The user name can not be empty") String name) {
         super(id);
-        this.categoryName = categoryName;
+        this.name = name;
     }
 }

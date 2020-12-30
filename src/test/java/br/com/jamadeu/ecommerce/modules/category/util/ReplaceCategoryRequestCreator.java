@@ -6,7 +6,7 @@ public class ReplaceCategoryRequestCreator {
     public static ReplaceCategoryRequest createReplaceCategoryRequest() {
         return ReplaceCategoryRequest.builder()
                 .id(1L)
-                .category("newCategory")
+                .name("newCategory")
                 .build();
     }
 }
