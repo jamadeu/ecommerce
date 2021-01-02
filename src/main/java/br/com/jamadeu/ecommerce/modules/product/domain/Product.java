@@ -22,7 +22,7 @@ public class Product extends AbstractProduct {
     @NotEmpty(message = "The product name can not be empty")
     @Column(nullable = false)
     @Schema(description = "This is the product's name")
-    private String name;
+    private String productName;
 
     @NotEmpty(message = "The product description can not be empty")
     @Size(max = 400)
@@ -41,13 +41,13 @@ public class Product extends AbstractProduct {
 
     @Builder
     public Product(Long id,
-                   @NotEmpty(message = "The product name can not be empty") String name,
+                   @NotEmpty(message = "The product name can not be empty") String productName,
                    @NotEmpty(message = "The product description can not be empty")
                    @Size(max = 400) String description,
                    @NotNull BigDecimal value,
                    @NotNull Category category) {
         super(id);
-        this.name = name;
+        this.productName = productName;
         this.description = description;
         this.value = value;
         this.category = category;

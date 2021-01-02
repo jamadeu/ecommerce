@@ -18,7 +18,7 @@ import javax.validation.constraints.Size;
 public class NewProductRequest {
     @NotEmpty(message = "The product name can not be empty")
     @Schema(description = "This is the product's name")
-    private String name;
+    private String productName;
 
     @NotEmpty(message = "The product description can not be empty")
     @Size(max = 400)

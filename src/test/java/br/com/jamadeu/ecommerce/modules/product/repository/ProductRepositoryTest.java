@@ -38,7 +38,7 @@ class ProductRepositoryTest {
 
         Assertions.assertThat(productSaved).isNotNull();
         Assertions.assertThat(productSaved.getId()).isNotNull();
-        Assertions.assertThat(productSaved.getName()).isEqualTo(productToBeSaved.getName());
+        Assertions.assertThat(productSaved.getProductName()).isEqualTo(productToBeSaved.getProductName());
         Assertions.assertThat(productSaved.getCategory())
                 .isNotNull();
     }
@@ -47,14 +47,14 @@ class ProductRepositoryTest {
     @DisplayName("save updates product when successful")
     void save_UpdatesProduct_WhenSuccessful() {
         Product productSaved = productRepository.save(ProductCreator.createProductToBeSaved(category));
-        productSaved.setName("new name");
+        productSaved.setProductName("new name");
         Product productUpdated = productRepository.save(productSaved);
 
         Assertions.assertThat(productUpdated).isNotNull();
         Assertions.assertThat(productUpdated.getId())
                 .isNotNull()
                 .isEqualTo(productSaved.getId());
-        Assertions.assertThat(productUpdated.getName()).isEqualTo("new name");
+        Assertions.assertThat(productUpdated.getProductName()).isEqualTo("new name");
         Assertions.assertThat(productSaved.getCategory())
                 .isNotNull();
     }
@@ -73,7 +73,7 @@ class ProductRepositoryTest {
     @DisplayName("findByName returns optional of product when successful")
     void findByName_ReturnsOptionalProduct_WhenSuccessful() {
         Product product = productRepository.save(ProductCreator.createProductToBeSaved(category));
-        Optional<Product> productOptional = productRepository.findByName(product.getName());
+        Optional<Product> productOptional = productRepository.findByProductName(product.getProductName());
 
         Assertions.assertThat(productOptional)
                 .isNotNull()
@@ -85,7 +85,7 @@ class ProductRepositoryTest {
     @Test
     @DisplayName("findByName returns an empty optional when product is not found")
     void findByName_ReturnsAnEmptyOptional_WhenProductIsNotFound() {
-        Optional<Product> productOptional = productRepository.findByName("not found product");
+        Optional<Product> productOptional = productRepository.findByProductName("not found product");
 
         Assertions.assertThat(productOptional)
                 .isNotNull()

@@ -43,7 +43,7 @@ public class ProductService {
     public Product create(NewProductRequest newProductRequest) {
         Product productToCreate = ProductMapper.INSTANCE.toProduct(newProductRequest);
         checkIfCategoryExists(productToCreate.getCategory().getName());
-        checkIfProductExists(productToCreate.getName());
+        checkIfProductExists(productToCreate.getProductName());
         productToCreate.setValue(BigDecimal.ZERO);
         return productRepository.save(productToCreate);
 
@@ -56,7 +56,7 @@ public class ProductService {
     }
 
     private void checkIfProductExists(String product) {
-        if (productRepository.findByName(product).isPresent()) {
+        if (productRepository.findByProductName(product).isPresent()) {
             throw new BadRequestException("Product already exists");
         }
     }

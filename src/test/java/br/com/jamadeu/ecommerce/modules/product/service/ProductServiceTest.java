@@ -51,20 +51,20 @@ class ProductServiceTest {
     @Test
     @DisplayName("listAll returns list of products inside page object when successful")
     void listAll_ReturnsListOfProductsInsidePageObject_WhenSuccessful() {
-        String expectedName = ProductCreator.createValidProduct().getName();
+        String expectedName = ProductCreator.createValidProduct().getProductName();
         Page<Product> productPage = productService.listAll(PageRequest.of(1, 1));
 
         Assertions.assertThat(productPage).isNotNull();
         Assertions.assertThat(productPage.toList())
                 .isNotEmpty()
                 .hasSize(1);
-        Assertions.assertThat(productPage.toList().get(0).getName()).isEqualTo(expectedName);
+        Assertions.assertThat(productPage.toList().get(0).getProductName()).isEqualTo(expectedName);
     }
 
     @Test
     @DisplayName("listAllByCategory returns list of products inside page object when successful")
     void listAllByCategory_ReturnsListOfProductsInsidePageObject_WhenSuccessful() {
-        String expectedName = ProductCreator.createValidProduct().getName();
+        String expectedName = ProductCreator.createValidProduct().getProductName();
         String category = ProductCreator.createValidProduct().getCategory().getName();
         Page<Product> productPage = productService.listAllByCategory(PageRequest.of(1, 1), category);
 
@@ -72,7 +72,7 @@ class ProductServiceTest {
         Assertions.assertThat(productPage.toList())
                 .isNotEmpty()
                 .hasSize(1);
-        Assertions.assertThat(productPage.toList().get(0).getName()).isEqualTo(expectedName);
+        Assertions.assertThat(productPage.toList().get(0).getProductName()).isEqualTo(expectedName);
     }
 
     @Test

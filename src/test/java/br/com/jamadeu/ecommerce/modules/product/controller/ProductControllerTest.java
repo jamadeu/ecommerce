@@ -46,7 +46,7 @@ class ProductControllerTest {
     @Test
     @DisplayName("listAll returns list of products inside page object when successful")
     void listAll_ReturnsListOfProductsInsidePageObject_WhenSuccessful() {
-        String expectedName = ProductCreator.createValidProduct().getName();
+        String expectedName = ProductCreator.createValidProduct().getProductName();
         ResponseEntity<Page<Product>> response = productController.listAll(PageRequest.of(1, 1));
         Page<Product> productPage = response.getBody();
 
@@ -56,13 +56,13 @@ class ProductControllerTest {
         Assertions.assertThat(productPage.toList())
                 .isNotEmpty()
                 .hasSize(1);
-        Assertions.assertThat(productPage.toList().get(0).getName()).isEqualTo(expectedName);
+        Assertions.assertThat(productPage.toList().get(0).getProductName()).isEqualTo(expectedName);
     }
 
     @Test
     @DisplayName("listAllByCategory returns list of products inside page object when successful")
     void listAllByCategory_ReturnsListOfProductsInsidePageObject_WhenSuccessful() {
-        String expectedName = ProductCreator.createValidProduct().getName();
+        String expectedName = ProductCreator.createValidProduct().getProductName();
         String category = ProductCreator.createValidProduct().getCategory().getName();
         ResponseEntity<Page<Product>> response = productController.listAllByCategory(PageRequest.of(1, 1), category);
         Page<Product> productPage = response.getBody();
@@ -73,7 +73,7 @@ class ProductControllerTest {
         Assertions.assertThat(productPage.toList())
                 .isNotEmpty()
                 .hasSize(1);
-        Assertions.assertThat(productPage.toList().get(0).getName()).isEqualTo(expectedName);
+        Assertions.assertThat(productPage.toList().get(0).getProductName()).isEqualTo(expectedName);
     }
 
     @Test

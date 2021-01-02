@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 public class ProductCreator {
     public static Product createProductToBeSaved() {
         return Product.builder()
-                .name("product")
+                .productName("product")
                 .description("description")
                 .value(BigDecimal.ZERO)
                 .category(CategoryCreator.createValidCategory())
@@ -18,7 +18,7 @@ public class ProductCreator {
 
     public static Product createProductToBeSaved(Category category) {
         return Product.builder()
-                .name("product")
+                .productName("product")
                 .description("description")
                 .value(BigDecimal.ZERO)
                 .category(category)
@@ -28,7 +28,7 @@ public class ProductCreator {
     public static Product createValidProduct() {
         return Product.builder()
                 .id(1L)
-                .name("product")
+                .productName("product")
                 .description("description")
                 .value(BigDecimal.ZERO)
                 .category(CategoryCreator.createValidCategory())
