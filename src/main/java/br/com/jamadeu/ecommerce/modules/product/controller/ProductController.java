@@ -2,6 +2,7 @@ package br.com.jamadeu.ecommerce.modules.product.controller;
 
 import br.com.jamadeu.ecommerce.modules.product.domain.Product;
 import br.com.jamadeu.ecommerce.modules.product.requests.NewProductRequest;
+import br.com.jamadeu.ecommerce.modules.product.requests.ReplaceProductRequest;
 import br.com.jamadeu.ecommerce.modules.product.service.ProductService;
 import br.com.jamadeu.ecommerce.shared.exception.BadRequestException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -65,12 +66,26 @@ public class ProductController {
             tags = {"products"}
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Successful operation"),
+            @ApiResponse(responseCode = "201", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "When there is an error with some mandatory field")
     })
     public ResponseEntity<Product> create(@RequestBody @Valid NewProductRequest newProductRequest) {
         return new ResponseEntity<>(productService.create(newProductRequest), HttpStatus.CREATED);
     }
 
+    @PutMapping
+    @Operation(summary = "Replace a product",
+            description = "Name, description, value and category fields are mandatory, " +
+                    "name must be unique",
+            tags = {"products"}
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Successful operation"),
+            @ApiResponse(responseCode = "400", description = "When there is an error with some mandatory field")
+    })
+    public ResponseEntity<Product> replace(@RequestBody @Valid ReplaceProductRequest replaceProductRequest) {
+        productService.replace(replaceProductRequest);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
 }
