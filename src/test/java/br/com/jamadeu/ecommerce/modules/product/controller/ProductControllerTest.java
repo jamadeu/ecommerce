@@ -1,7 +1,9 @@
 package br.com.jamadeu.ecommerce.modules.product.controller;
 
 import br.com.jamadeu.ecommerce.modules.product.domain.Product;
+import br.com.jamadeu.ecommerce.modules.product.requests.NewProductRequest;
 import br.com.jamadeu.ecommerce.modules.product.service.ProductService;
+import br.com.jamadeu.ecommerce.modules.product.util.NewProductRequestCreator;
 import br.com.jamadeu.ecommerce.modules.product.util.ProductCreator;
 import br.com.jamadeu.ecommerce.shared.exception.BadRequestException;
 import lombok.extern.log4j.Log4j2;
@@ -40,6 +42,8 @@ class ProductControllerTest {
         BDDMockito.when(productServiceMock.listAllByCategory(ArgumentMatchers.any(PageRequest.class), ArgumentMatchers.anyString()))
                 .thenReturn(productPage);
         BDDMockito.when(productServiceMock.findByIdOrThrowBadRequestException(ArgumentMatchers.anyLong()))
+                .thenReturn(ProductCreator.createValidProduct());
+        BDDMockito.when(productServiceMock.create(ArgumentMatchers.any(NewProductRequest.class)))
                 .thenReturn(ProductCreator.createValidProduct());
     }
 
@@ -99,4 +103,22 @@ class ProductControllerTest {
                 .isNotNull()
                 .isEqualTo(product);
     }
+
+    @Test
+    @DisplayName("create returns product when successful")
+    void create_ReturnsProduct_WhenSuccessful() {
+        NewProductRequest newProductRequest = NewProductRequestCreator.createNewProductRequest();
+        ResponseEntity<Product> response = productController.create(newProductRequest);
+        Product createdProduct = response.getBody();
+
+        Assertions.assertThat(response).isNotNull();
+        Assertions.assertThat(response.getStatusCode())
+                .isNotNull()
+                .isEqualTo(HttpStatus.CREATED);
+        Assertions.assertThat(createdProduct)
+                .isNotNull()
+                .isEqualTo(ProductCreator.createValidProduct());
+    }
+
+
 }
