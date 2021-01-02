@@ -44,7 +44,7 @@ public class ProductService {
 
     public Product create(NewProductRequest newProductRequest) {
         Product productToCreate = ProductMapper.INSTANCE.toProduct(newProductRequest);
-        checkIfCategoryExists(productToCreate.getCategory().getCategoryName());
+        checkIfCategoryExists(productToCreate.getCategory().getId());
         checkIfProductExists(productToCreate.getProductName());
         productToCreate.setValue(BigDecimal.ZERO);
         return productRepository.save(productToCreate);
@@ -56,7 +56,7 @@ public class ProductService {
             checkIfProductExists(request.getProductName());
         }
         if (product.getCategory() != request.getCategory()) {
-            checkIfCategoryExists(request.getCategory().toString());
+            checkIfCategoryExists(request.getCategory().getId());
         }
         if (request.getValue().compareTo(BigDecimal.ZERO) < 0) {
             throw new BadRequestException("Value can not be negative");
@@ -64,9 +64,9 @@ public class ProductService {
         productRepository.save(ProductMapper.INSTANCE.toProduct(request));
     }
 
-    private void checkIfCategoryExists(String category) {
-        if (categoryRepository.findByCategoryName(category).isPresent()) {
-            throw new BadRequestException("Category already exists");
+    private void checkIfCategoryExists(Long categoryId) {
+        if (categoryRepository.findById(categoryId).isEmpty()) {
+            throw new BadRequestException("Category not found");
         }
     }
 
