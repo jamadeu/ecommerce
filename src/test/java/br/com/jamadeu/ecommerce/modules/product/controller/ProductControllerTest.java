@@ -2,11 +2,12 @@ package br.com.jamadeu.ecommerce.modules.product.controller;
 
 import br.com.jamadeu.ecommerce.modules.product.domain.Product;
 import br.com.jamadeu.ecommerce.modules.product.requests.NewProductRequest;
+import br.com.jamadeu.ecommerce.modules.product.requests.ReplaceProductRequest;
 import br.com.jamadeu.ecommerce.modules.product.service.ProductService;
 import br.com.jamadeu.ecommerce.modules.product.util.NewProductRequestCreator;
 import br.com.jamadeu.ecommerce.modules.product.util.ProductCreator;
+import br.com.jamadeu.ecommerce.modules.product.util.ReplaceProductRequestCreator;
 import br.com.jamadeu.ecommerce.shared.exception.BadRequestException;
-import lombok.extern.log4j.Log4j2;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,7 +26,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 
-@Log4j2
 @ExtendWith(SpringExtension.class)
 class ProductControllerTest {
     @InjectMocks
@@ -107,8 +107,8 @@ class ProductControllerTest {
     @Test
     @DisplayName("create returns product when successful")
     void create_ReturnsProduct_WhenSuccessful() {
-        NewProductRequest newProductRequest = NewProductRequestCreator.createNewProductRequest();
-        ResponseEntity<Product> response = productController.create(newProductRequest);
+        NewProductRequest request = NewProductRequestCreator.createNewProductRequest();
+        ResponseEntity<Product> response = productController.create(request);
         Product createdProduct = response.getBody();
 
         Assertions.assertThat(response).isNotNull();
@@ -120,5 +120,15 @@ class ProductControllerTest {
                 .isEqualTo(ProductCreator.createValidProduct());
     }
 
+    @Test
+    @DisplayName("replace returns no content when successful")
+    void create_ReturnsNoContent_WhenSuccessful() {
+        ReplaceProductRequest request = ReplaceProductRequestCreator.createReplaceProductRequest();
+        ResponseEntity<Product> response = productController.replace(request);
 
+        Assertions.assertThat(response).isNotNull();
+        Assertions.assertThat(response.getStatusCode())
+                .isNotNull()
+                .isEqualTo(HttpStatus.NO_CONTENT);
+    }
 }
