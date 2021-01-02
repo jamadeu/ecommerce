@@ -6,8 +6,10 @@ import br.com.jamadeu.ecommerce.modules.category.util.CategoryCreator;
 import br.com.jamadeu.ecommerce.modules.product.domain.Product;
 import br.com.jamadeu.ecommerce.modules.product.repository.ProductRepository;
 import br.com.jamadeu.ecommerce.modules.product.requests.NewProductRequest;
+import br.com.jamadeu.ecommerce.modules.product.requests.ReplaceProductRequest;
 import br.com.jamadeu.ecommerce.modules.product.util.NewProductRequestCreator;
 import br.com.jamadeu.ecommerce.modules.product.util.ProductCreator;
+import br.com.jamadeu.ecommerce.modules.product.util.ReplaceProductRequestCreator;
 import br.com.jamadeu.ecommerce.shared.exception.BadRequestException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,6 +53,8 @@ class ProductServiceTest {
                 .thenReturn(Optional.of(ProductCreator.createValidProduct()));
         BDDMockito.when(categoryRepositoryMock.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.of(CategoryCreator.createValidCategory()));
+        BDDMockito.when(productRepositoryMock.findByProductName(ArgumentMatchers.anyString()))
+                .thenReturn(Optional.empty());
         BDDMockito.when(productRepositoryMock.save(ArgumentMatchers.any(Product.class)))
                 .thenReturn(ProductCreator.createValidProduct());
     }
@@ -148,6 +152,53 @@ class ProductServiceTest {
 
         Assertions.assertThatExceptionOfType(BadRequestException.class)
                 .isThrownBy(() -> productService.create(request));
+    }
+
+    @Test
+    @DisplayName("replace returns product when successful")
+    void replace_ReturnsProduct_WhenSuccessful() {
+        ReplaceProductRequest request = ReplaceProductRequestCreator.createReplaceProductRequest();
+
+        Assertions.assertThatCode(() -> productService.replace(request))
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    @DisplayName("replace throws BadRequestException when category is not found")
+    void replace_ThrowsBadRequestException_WhenCategoryIsNotFound() {
+        BDDMockito.when(categoryRepositoryMock.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.empty());
+        ReplaceProductRequest request = ReplaceProductRequestCreator.createReplaceProductRequest();
+        Category categoryNotExists = Category.builder()
+                .id(2L)
+                .categoryName("categoryNotExists")
+                .build();
+        request.setCategory(categoryNotExists);
+
+        Assertions.assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> productService.replace(request));
+    }
+
+    @Test
+    @DisplayName("replace throws BadRequestException when product already exists")
+    void replace_ThrowsBadRequestException_WhenProductAlreadyExists() {
+        BDDMockito.when(productRepositoryMock.findByProductName(ArgumentMatchers.anyString()))
+                .thenReturn(Optional.of(ProductCreator.createValidProduct()));
+        ReplaceProductRequest request = ReplaceProductRequestCreator.createReplaceProductRequest();
+        request.setProductName("anotherProduct");
+
+        Assertions.assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> productService.replace(request));
+    }
+
+    @Test
+    @DisplayName("replace throws BadRequestException when product value is negative")
+    void replace_ThrowsBadRequestException_WhenProductValueIsNegative() {
+        ReplaceProductRequest request = ReplaceProductRequestCreator.createReplaceProductRequest();
+        request.setValue(request.getValue().negate());
+
+        Assertions.assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> productService.replace(request));
     }
 
 }
