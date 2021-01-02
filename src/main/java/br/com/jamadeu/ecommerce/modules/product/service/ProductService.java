@@ -6,6 +6,7 @@ import br.com.jamadeu.ecommerce.modules.product.domain.Product;
 import br.com.jamadeu.ecommerce.modules.product.mapper.ProductMapper;
 import br.com.jamadeu.ecommerce.modules.product.repository.ProductRepository;
 import br.com.jamadeu.ecommerce.modules.product.requests.NewProductRequest;
+import br.com.jamadeu.ecommerce.modules.product.requests.ReplaceProductRequest;
 import br.com.jamadeu.ecommerce.shared.exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
@@ -39,14 +41,27 @@ public class ProductService {
                 .orElseThrow(() -> new BadRequestException("Product not found"));
     }
 
-    @Transactional
+
     public Product create(NewProductRequest newProductRequest) {
         Product productToCreate = ProductMapper.INSTANCE.toProduct(newProductRequest);
         checkIfCategoryExists(productToCreate.getCategory().getCategoryName());
         checkIfProductExists(productToCreate.getProductName());
         productToCreate.setValue(BigDecimal.ZERO);
         return productRepository.save(productToCreate);
+    }
 
+    public void replace(ReplaceProductRequest request) {
+        Product product = findByIdOrThrowBadRequestException(request.getId());
+        if (!product.getProductName().equals(request.getProductName())) {
+            checkIfProductExists(request.getProductName());
+        }
+        if (product.getCategory() != request.getCategory()) {
+            checkIfCategoryExists(request.getCategory().toString());
+        }
+        if (request.getValue().compareTo(BigDecimal.ZERO) < 0) {
+            throw new BadRequestException("Value can not be negative");
+        }
+        productRepository.save(ProductMapper.INSTANCE.toProduct(request));
     }
 
     private void checkIfCategoryExists(String category) {

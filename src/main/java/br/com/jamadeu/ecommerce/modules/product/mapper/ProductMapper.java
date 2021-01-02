@@ -2,6 +2,7 @@ package br.com.jamadeu.ecommerce.modules.product.mapper;
 
 import br.com.jamadeu.ecommerce.modules.product.domain.Product;
 import br.com.jamadeu.ecommerce.modules.product.requests.NewProductRequest;
+import br.com.jamadeu.ecommerce.modules.product.requests.ReplaceProductRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -13,4 +14,6 @@ public abstract class ProductMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "value", ignore = true)
     public abstract Product toProduct(NewProductRequest newProductRequest);
+
+    public abstract Product toProduct(ReplaceProductRequest replaceProductRequest);
 }
