@@ -28,7 +28,7 @@ public class ProductService {
     }
 
     public Page<Product> listAllByCategory(Pageable pageable, String category) {
-        Category categoryFounded = categoryRepository.findByName(category)
+        Category categoryFounded = categoryRepository.findByCategoryName(category)
                 .orElseThrow(() -> new BadRequestException("Category not found"));
         List<Product> productList = productRepository.findByCategory(categoryFounded);
         return new PageImpl<>(productList, pageable, productList.size());
@@ -42,7 +42,7 @@ public class ProductService {
     @Transactional
     public Product create(NewProductRequest newProductRequest) {
         Product productToCreate = ProductMapper.INSTANCE.toProduct(newProductRequest);
-        checkIfCategoryExists(productToCreate.getCategory().getName());
+        checkIfCategoryExists(productToCreate.getCategory().getCategoryName());
         checkIfProductExists(productToCreate.getProductName());
         productToCreate.setValue(BigDecimal.ZERO);
         return productRepository.save(productToCreate);
@@ -50,7 +50,7 @@ public class ProductService {
     }
 
     private void checkIfCategoryExists(String category) {
-        if (categoryRepository.findByName(category).isPresent()) {
+        if (categoryRepository.findByCategoryName(category).isPresent()) {
             throw new BadRequestException("Category already exists");
         }
     }

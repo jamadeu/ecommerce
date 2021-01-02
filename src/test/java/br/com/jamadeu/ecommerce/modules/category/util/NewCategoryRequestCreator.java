@@ -5,7 +5,7 @@ import br.com.jamadeu.ecommerce.modules.category.requests.NewCategoryRequest;
 public class NewCategoryRequestCreator {
     public static NewCategoryRequest createNewCategoryRequest() {
         return NewCategoryRequest.builder()
-                .name("newCategory")
+                .categoryName("newCategory")
                 .build();
     }
 }

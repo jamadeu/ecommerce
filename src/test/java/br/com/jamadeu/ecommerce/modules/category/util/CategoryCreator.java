@@ -5,21 +5,21 @@ import br.com.jamadeu.ecommerce.modules.category.domain.Category;
 public class CategoryCreator {
     public static Category createCategoryToBeSaved() {
         return Category.builder()
-                .name("category")
+                .categoryName("category")
                 .build();
     }
 
     public static Category createValidCategory() {
         return Category.builder()
                 .id(1L)
-                .name("category")
+                .categoryName("category")
                 .build();
     }
 
     public static Category createUpdatedCategory() {
         return Category.builder()
                 .id(1L)
-                .name("updated category")
+                .categoryName("updated category")
                 .build();
     }
 }

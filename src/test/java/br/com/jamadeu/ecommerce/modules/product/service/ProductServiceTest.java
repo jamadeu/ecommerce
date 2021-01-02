@@ -40,7 +40,7 @@ class ProductServiceTest {
         PageImpl<Product> productPage = new PageImpl<>(List.of(ProductCreator.createValidProduct()));
         BDDMockito.when(productRepositoryMock.findAll(ArgumentMatchers.any(PageRequest.class)))
                 .thenReturn(productPage);
-        BDDMockito.when(categoryRepositoryMock.findByName(ArgumentMatchers.anyString()))
+        BDDMockito.when(categoryRepositoryMock.findByCategoryName(ArgumentMatchers.anyString()))
                 .thenReturn(Optional.of(CategoryCreator.createValidCategory()));
         BDDMockito.when(productRepositoryMock.findByCategory(ArgumentMatchers.any(Category.class)))
                 .thenReturn(List.of(ProductCreator.createValidProduct()));
@@ -65,7 +65,7 @@ class ProductServiceTest {
     @DisplayName("listAllByCategory returns list of products inside page object when successful")
     void listAllByCategory_ReturnsListOfProductsInsidePageObject_WhenSuccessful() {
         String expectedName = ProductCreator.createValidProduct().getProductName();
-        String category = ProductCreator.createValidProduct().getCategory().getName();
+        String category = ProductCreator.createValidProduct().getCategory().getCategoryName();
         Page<Product> productPage = productService.listAllByCategory(PageRequest.of(1, 1), category);
 
         Assertions.assertThat(productPage).isNotNull();
@@ -78,7 +78,7 @@ class ProductServiceTest {
     @Test
     @DisplayName("listAllByCategory throws BadRequestException when category is not found")
     void listAllByCategory_ThrowsBadRequestException_WhenCategoryIsNotFound() {
-        BDDMockito.when(categoryRepositoryMock.findByName(ArgumentMatchers.anyString()))
+        BDDMockito.when(categoryRepositoryMock.findByCategoryName(ArgumentMatchers.anyString()))
                 .thenReturn(Optional.empty());
         String categoryNotExists = "category not exists";
         PageRequest pageRequest = PageRequest.of(0, 5);

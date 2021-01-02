@@ -63,7 +63,7 @@ class ProductControllerTest {
     @DisplayName("listAllByCategory returns list of products inside page object when successful")
     void listAllByCategory_ReturnsListOfProductsInsidePageObject_WhenSuccessful() {
         String expectedName = ProductCreator.createValidProduct().getProductName();
-        String category = ProductCreator.createValidProduct().getCategory().getName();
+        String category = ProductCreator.createValidProduct().getCategory().getCategoryName();
         ResponseEntity<Page<Product>> response = productController.listAllByCategory(PageRequest.of(1, 1), category);
         Page<Product> productPage = response.getBody();
 

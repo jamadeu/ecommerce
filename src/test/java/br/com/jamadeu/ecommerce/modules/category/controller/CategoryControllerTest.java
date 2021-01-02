@@ -49,14 +49,14 @@ class CategoryControllerTest {
     @Test
     @DisplayName("listAll returns list of categories inside page object when successful")
     void listAll_ReturnsListOfCategoriesInsidePageObject_WhenSuccessful() {
-        String expectedCategory = CategoryCreator.createValidCategory().getName();
+        String expectedCategory = CategoryCreator.createValidCategory().getCategoryName();
         Page<Category> categoryPage = categoryController.listAll(PageRequest.of(1, 1)).getBody();
 
         Assertions.assertThat(categoryPage).isNotNull();
         Assertions.assertThat(categoryPage.toList())
                 .isNotEmpty()
                 .hasSize(1);
-        Assertions.assertThat(categoryPage.toList().get(0).getName()).isEqualTo(expectedCategory);
+        Assertions.assertThat(categoryPage.toList().get(0).getCategoryName()).isEqualTo(expectedCategory);
     }
 
     @Test
