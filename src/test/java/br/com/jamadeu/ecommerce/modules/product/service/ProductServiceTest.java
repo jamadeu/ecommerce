@@ -5,6 +5,8 @@ import br.com.jamadeu.ecommerce.modules.category.repository.CategoryRepository;
 import br.com.jamadeu.ecommerce.modules.category.util.CategoryCreator;
 import br.com.jamadeu.ecommerce.modules.product.domain.Product;
 import br.com.jamadeu.ecommerce.modules.product.repository.ProductRepository;
+import br.com.jamadeu.ecommerce.modules.product.requests.NewProductRequest;
+import br.com.jamadeu.ecommerce.modules.product.util.NewProductRequestCreator;
 import br.com.jamadeu.ecommerce.modules.product.util.ProductCreator;
 import br.com.jamadeu.ecommerce.shared.exception.BadRequestException;
 import org.assertj.core.api.Assertions;
@@ -21,6 +23,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,6 +49,10 @@ class ProductServiceTest {
                 .thenReturn(List.of(ProductCreator.createValidProduct()));
         BDDMockito.when(productRepositoryMock.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.of(ProductCreator.createValidProduct()));
+        BDDMockito.when(categoryRepositoryMock.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.of(CategoryCreator.createValidCategory()));
+        BDDMockito.when(productRepositoryMock.save(ArgumentMatchers.any(Product.class)))
+                .thenReturn(ProductCreator.createValidProduct());
     }
 
     @Test
@@ -100,12 +107,47 @@ class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("findByIdOrThrowBadRequestException throws BadRequestException when category is not found")
-    void findByIdOrThrowBadRequestException_ThrowsBadRequestException_WhenCategoryIsNotFound() {
+    @DisplayName("findByIdOrThrowBadRequestException throws BadRequestException when product is not found")
+    void findByIdOrThrowBadRequestException_ThrowsBadRequestException_WhenProductIsNotFound() {
         BDDMockito.when(productRepositoryMock.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.empty());
+
         Assertions.assertThatExceptionOfType(BadRequestException.class)
                 .isThrownBy(() -> productService.findByIdOrThrowBadRequestException(1L));
+    }
+
+    @Test
+    @DisplayName("create returns product when successful")
+    void create_ReturnsProduct_WhenSuccessful() {
+        NewProductRequest request = NewProductRequestCreator.createNewProductRequest();
+        Product createdProduct = productService.create(request);
+
+        Assertions.assertThat(createdProduct).isNotNull();
+        Assertions.assertThat(createdProduct.getId()).isNotNull();
+        Assertions.assertThat(createdProduct.getValue())
+                .isEqualTo(BigDecimal.ZERO);
+    }
+
+    @Test
+    @DisplayName("create throws BadRequestException when category is not found")
+    void create_ThrowsBadRequestException_WhenCategoryIsNotFound() {
+        BDDMockito.when(categoryRepositoryMock.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.empty());
+        NewProductRequest request = NewProductRequestCreator.createNewProductRequest();
+
+        Assertions.assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> productService.create(request));
+    }
+
+    @Test
+    @DisplayName("create throws BadRequestException when product already exists")
+    void create_ThrowsBadRequestException_WhenProductAlreadyExists() {
+        BDDMockito.when(productRepositoryMock.findByProductName(ArgumentMatchers.anyString()))
+                .thenReturn(Optional.of(ProductCreator.createValidProduct()));
+        NewProductRequest request = NewProductRequestCreator.createNewProductRequest();
+
+        Assertions.assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> productService.create(request));
     }
 
 }
