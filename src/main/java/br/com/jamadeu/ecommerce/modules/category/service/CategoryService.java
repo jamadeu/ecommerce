@@ -10,11 +10,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CategoryService {
     private final CategoryRepository categoryRepository;
 
@@ -27,14 +28,13 @@ public class CategoryService {
                 .orElseThrow(() -> new BadRequestException("Category not found"));
     }
 
-    @Transactional
+
     public Category save(NewCategoryRequest newCategoryRequest) {
         Category categoryToBeSaved = CategoryMapper.INSTANCE.toCategory(newCategoryRequest);
         checkIfCategoryExists(categoryToBeSaved.getCategoryName());
         return categoryRepository.save(categoryToBeSaved);
     }
 
-    @Transactional
     public void replace(ReplaceCategoryRequest replaceCategoryRequest) {
         Category categoryToReplace = CategoryMapper.INSTANCE.toCategory(replaceCategoryRequest);
         Category foundedCategory = findByIdOrThrowBadRequestException(replaceCategoryRequest.getId());
@@ -44,7 +44,6 @@ public class CategoryService {
         categoryRepository.save(categoryToReplace);
     }
 
-    @Transactional
     public void delete(Long id) {
         Category category = findByIdOrThrowBadRequestException(id);
         categoryRepository.delete(category);

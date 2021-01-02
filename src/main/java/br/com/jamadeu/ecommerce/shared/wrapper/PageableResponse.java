@@ -1,6 +1,7 @@
 package br.com.jamadeu.ecommerce.shared.wrapper;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.EqualsAndHashCode;
@@ -19,7 +20,7 @@ public class PageableResponse<T> extends PageImpl<T> {
     private int totalPages;
     private int numberOfElements;
 
-    @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+    @JsonCreator(mode = Mode.PROPERTIES)
     public PageableResponse(@JsonProperty("content") java.util.List<T> content,
                             @JsonProperty("number") int number,
                             @JsonProperty("size") int size,
