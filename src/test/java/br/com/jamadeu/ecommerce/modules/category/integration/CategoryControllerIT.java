@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -98,6 +99,47 @@ class CategoryControllerIT {
         categoryRepository.save(CategoryCreator.createCategoryToBeSaved());
         NewCategoryRequest request = NewCategoryRequestCreator.createNewCategoryRequest();
         ResponseEntity<Category> response = testRestTemplate.postForEntity("/categories", request, Category.class);
+
+        Assertions.assertThat(response).isNotNull();
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    @DisplayName("replace returns category when successful")
+    void replace_ReturnsCategory_WhenSuccessful() {
+        Category savedCategory = categoryRepository.save(CategoryCreator.createCategoryToBeSaved());
+        savedCategory.setCategoryName("newCategory");
+        ResponseEntity<Void> response = testRestTemplate.exchange("/categories",
+                HttpMethod.PUT, new HttpEntity<>(savedCategory), Void.class);
+
+        Assertions.assertThat(response).isNotNull();
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
+
+    @Test
+    @DisplayName("replace returns BadRequest when category to be replace is not exists")
+    void replace_ReturnsBadeRequest_WhenCategoryToBeReplacedIsNotExists() {
+        Category savedCategory = Category.builder()
+                .id(1L)
+                .categoryName("categoryNotExists")
+                .build();
+        ResponseEntity<Void> response = testRestTemplate.exchange("/categories",
+                HttpMethod.PUT, new HttpEntity<>(savedCategory), Void.class);
+
+        Assertions.assertThat(response).isNotNull();
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    @DisplayName("replace returns BadeRequest when categoryName already exist")
+    void replace_ReturnsBadeRequest_WhenCategoryNameAlreadyExists() {
+        categoryRepository.save(Category.builder()
+                .categoryName("anotherCategory")
+                .build());
+        Category savedCategory = categoryRepository.save(CategoryCreator.createCategoryToBeSaved());
+        savedCategory.setCategoryName("anotherCategory");
+        ResponseEntity<Void> response = testRestTemplate.exchange("/categories",
+                HttpMethod.PUT, new HttpEntity<>(savedCategory), Void.class);
 
         Assertions.assertThat(response).isNotNull();
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
