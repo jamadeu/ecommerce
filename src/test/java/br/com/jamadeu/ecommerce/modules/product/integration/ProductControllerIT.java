@@ -45,4 +45,27 @@ class ProductControllerIT {
                 .hasSize(1);
         Assertions.assertThat(response.toList().get(0).getProductName()).isEqualTo(expectedName);
     }
+
+    @Test
+    @DisplayName("listAllByCategory returns list of product inside page object when successful")
+    void listAllByCategory_ReturnsListOfProductInsidePageObject_WhenSuccessful() {
+        Category firstCategory = categoryRepository.save(Category.builder()
+                .categoryName("firstCategory")
+                .build());
+        Category secondCategory = categoryRepository.save(Category.builder()
+                .categoryName("secondCategory")
+                .build());
+        Product firstProduct = productRepository.save(ProductCreator.createProductToBeSaved(firstCategory));
+        productRepository.save(ProductCreator.createProductToBeSaved(secondCategory));
+        PageableResponse<Product> response = testRestTemplate.exchange("/products/list-by-category/{category}",
+                HttpMethod.GET, null, new ParameterizedTypeReference<PageableResponse<Product>>() {
+                },
+                firstCategory.getCategoryName()).getBody();
+
+        Assertions.assertThat(response).isNotNull();
+        Assertions.assertThat(response.toList())
+                .isNotEmpty()
+                .hasSize(1);
+        Assertions.assertThat(response.toList().get(0).getProductName()).isEqualTo(firstProduct.getProductName());
+    }
 }
