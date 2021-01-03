@@ -1,0 +1,48 @@
+package br.com.jamadeu.ecommerce.modules.product.integration;
+
+import br.com.jamadeu.ecommerce.modules.category.domain.Category;
+import br.com.jamadeu.ecommerce.modules.category.repository.CategoryRepository;
+import br.com.jamadeu.ecommerce.modules.category.util.CategoryCreator;
+import br.com.jamadeu.ecommerce.modules.product.domain.Product;
+import br.com.jamadeu.ecommerce.modules.product.repository.ProductRepository;
+import br.com.jamadeu.ecommerce.modules.product.util.ProductCreator;
+import br.com.jamadeu.ecommerce.shared.wrapper.PageableResponse;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.test.annotation.DirtiesContext;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureTestDatabase
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+class ProductControllerIT {
+    @Autowired
+    private TestRestTemplate testRestTemplate;
+    @Autowired
+    private ProductRepository productRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Test
+    @DisplayName("listAll returns list of product inside page object when successful")
+    void listAll_ReturnsListOfProductInsidePageObject_WhenSuccessful() {
+        Category savedCategory = categoryRepository.save(CategoryCreator.createCategoryToBeSaved());
+        Product savedProduct = productRepository.save(ProductCreator.createProductToBeSaved(savedCategory));
+        String expectedName = savedProduct.getProductName();
+        PageableResponse<Product> response = testRestTemplate.exchange("/products", HttpMethod.GET, null,
+                new ParameterizedTypeReference<PageableResponse<Product>>() {
+                }).getBody();
+
+        Assertions.assertThat(response).isNotNull();
+        Assertions.assertThat(response.toList())
+                .isNotEmpty()
+                .hasSize(1);
+        Assertions.assertThat(response.toList().get(0).getProductName()).isEqualTo(expectedName);
+    }
+}
