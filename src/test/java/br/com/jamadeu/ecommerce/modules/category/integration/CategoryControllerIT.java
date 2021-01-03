@@ -20,6 +20,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.Optional;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -140,6 +142,29 @@ class CategoryControllerIT {
         savedCategory.setCategoryName("anotherCategory");
         ResponseEntity<Void> response = testRestTemplate.exchange("/categories",
                 HttpMethod.PUT, new HttpEntity<>(savedCategory), Void.class);
+
+        Assertions.assertThat(response).isNotNull();
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    @DisplayName("delete removes category when successful")
+    void delete_RemovesCategory_WhenSuccessful() {
+        Category savedCategory = categoryRepository.save(CategoryCreator.createCategoryToBeSaved());
+        ResponseEntity<Void> response = testRestTemplate.exchange("/categories/{id}", HttpMethod.DELETE,
+                null, Void.class, savedCategory.getId());
+        Optional<Category> optionalCategory = categoryRepository.findById(savedCategory.getId());
+
+        Assertions.assertThat(response).isNotNull();
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        Assertions.assertThat(optionalCategory).isEmpty();
+    }
+
+    @Test
+    @DisplayName("delete returns BadRequest when category is not exist")
+    void delete_RemovesBadRequest_WhenIsNotExist() {
+        ResponseEntity<Void> response = testRestTemplate.exchange("/categories/{id}", HttpMethod.DELETE,
+                null, Void.class, 1L);
 
         Assertions.assertThat(response).isNotNull();
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
