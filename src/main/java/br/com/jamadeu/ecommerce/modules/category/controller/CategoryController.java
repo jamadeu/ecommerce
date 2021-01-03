@@ -47,7 +47,7 @@ public class CategoryController {
 
     @PostMapping
     @Operation(summary = "Create a new category",
-            description = "Category field is mandatory, " +
+            description = "categoryName field is mandatory, " +
                     "category must be unique",
             tags = {"categories"}
     )
