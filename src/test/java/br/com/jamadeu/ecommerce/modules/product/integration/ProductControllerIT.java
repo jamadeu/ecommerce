@@ -16,6 +16,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -67,5 +69,29 @@ class ProductControllerIT {
                 .isNotEmpty()
                 .hasSize(1);
         Assertions.assertThat(response.toList().get(0).getProductName()).isEqualTo(firstProduct.getProductName());
+    }
+
+    @Test
+    @DisplayName("findById returns Product when successful")
+    void findById_ReturnsProduct_WhenSuccessful() {
+        Category savedCategory = categoryRepository.save(CategoryCreator.createCategoryToBeSaved());
+        Product savedProduct = productRepository.save(ProductCreator.createProductToBeSaved(savedCategory));
+        Long expectedId = savedProduct.getId();
+        Product product = testRestTemplate.getForObject("/products/{id}", Product.class, expectedId);
+
+        Assertions.assertThat(product).isNotNull();
+        Assertions.assertThat(product.getId())
+                .isNotNull()
+                .isEqualTo(expectedId);
+    }
+
+    @Test
+    @DisplayName("findById returns BadRequest when product is not found")
+    void findById_ReturnsBadRequest_WhenProductIsNotFound() {
+        ResponseEntity<Product> response = testRestTemplate.getForEntity(
+                "/products/{id}", Product.class, 1L);
+
+        Assertions.assertThat(response).isNotNull();
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 }
